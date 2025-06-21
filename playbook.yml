@@ -1,0 +1,26 @@
+---
+- name: Scan targets by scanners using nmap
+  hosts: scanners
+  remote_user: runner
+  become: true
+  become_method: sudo
+  gather_facts: true
+
+  tasks:
+  - name: Ensure NMAP installed
+    ansible.builtin.apt:
+      name: nmap
+      state: present
+
+  - name: Scan targets
+    ansible.builtin.command: "nmap {{ item }} -p 80,443 -oG -"
+    # commented -> test the loop is working as supposed, targets.txt is well parsed:
+    # ansible.builtin.debug: { msg: "{{ item }}" }
+    loop: "{{ lookup('file', './targets.txt').splitlines() }}"
+    register: scan_results
+
+  - name: Show scan results
+    ansible.builtin.debug:
+       #msg: {{ scan_results }} #too many information in registered fact, so we use loop on results
+       msg: "{{ item.stdout_lines }}"
+    loop: "{{ scan_results.results }}"

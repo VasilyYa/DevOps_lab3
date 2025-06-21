@@ -1,0 +1,9 @@
+scanners:
+  hosts:
+    ubuntu-1:
+      ansible_host: 213.171.24.89
+      ansible_port: 9026
+      ansible_user: runner
+    ubuntu-2:
+      ansible_host: 82.202.140.103
+      ansible_user: runner
